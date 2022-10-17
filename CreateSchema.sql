@@ -1,11 +1,14 @@
 use bookish
 go
 
-create table BookLoans(
+create table Checkouts(
     ISBN int IDENTITY(1,1) not null primary key,
     UserId int null,
-    Due DATE NULL
+    CheckoutDate date not null,
+    DueDate date not null,
+    ReturnDate date null
 )
+go
 
 create table Books(
     BookId int IDENTITY(1,1) not null primary key,
