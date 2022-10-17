@@ -8,9 +8,10 @@ create table BookLoans(
 )
 
 create table Books(
-    ISBN int IDENTITY(1,1) not null primary key,
+    BookId int IDENTITY(1,1) not null primary key,
     Title varchar(255) not null,
-    Author varchar(255) not null
+    Author varchar(255) not null,
+    ISBN varchar(14)
 )
 
 create table Users(
