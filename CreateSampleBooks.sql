@@ -5,19 +5,23 @@ drop procedure dbo.AddBook;
 go
 
 CREATE PROCEDURE [dbo].[AddBook]
-    -- @id int out,
     @title VARCHAR(255) = NULL,
     @author VARCHAR(255) = NULL,
     @isbn varchar(14) = NULL
 AS
+    declare @recordCount int
+    set @recordCount = (select count(*) from Books where [Title]=@title AND [Author]=@author AND [ISBN]=@isbn)
 
-    INSERT INTO dbo.Books ([Title], [Author], [ISBN])
-    VALUES (@title, @author, @isbn);
+    IF @recordCount < 1
+    begin
+        INSERT INTO dbo.Books ([Title], [Author], [ISBN])
+        VALUES (@title, @author, @isbn);
+    end
 
-    declare @id int
-    SET @id = SCOPE_IDENTITY();
+    declare @bookId int
+    select @bookId=BookId from Books where [Title]=@title AND [Author]=@author AND [ISBN]=@isbn;
 
-    INSERT INTO dbo.Copies ([BookId]) values (@id)
+    INSERT INTO dbo.Copies ([BookId]) values (@bookId)
 
 go
 
