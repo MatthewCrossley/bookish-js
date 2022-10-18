@@ -1,9 +1,41 @@
-import connection from "./connect.js"
+import query from "./connect.js"
 
-export async function getBooks(){
-    const sql = await connection()
+class Copy {
+    constructor(id, bookId){
+        this.copyId = id
+        this.bookId = bookId
+    }
+}
 
-    const result = await sql.query("select * from books")
+class Book {
+    constructor(id, title, author, isbn){
+        this.bookId = id
+        this.title = title
+        this.author = author
+        this.isbn = isbn
+    }
+}
 
-    return result["recordset"]
+export async function getBooks(bookId){
+    var result
+    if (bookId === undefined){
+        result = await query("select * from books")
+    } else {
+        result = await query(`select * from Books where BookId=${bookId}`)
+    }
+
+    let books = []
+    for (let record of result["recordset"]){
+        books.push(new Book(record["BookId"], record["Title"], record["Author"], record["ISBN"]))
+    }
+    return books
+}
+
+export async function getCopies(bookId){
+    const result = await query(`select CopyId from Copies where BookId=${bookId}`)
+    let copies = []
+    for (let record of result["recordset"]){
+        copies.push(new Copy(record["CopyId"], bookId))
+    }
+    return copies
 }
