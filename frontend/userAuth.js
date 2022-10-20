@@ -34,8 +34,36 @@ async function createUser(){
     hashString(password).then(passwordHash => {
         fetch(`http://localhost:3000/createUser?u=${username}&ph=${passwordHash}&s=${salt}`)
         .then(response => {
-            response.text().then(text => {
-                document.getElementById("status").innerHTML = "Status: " + text
+            response.text().then(response => {
+                response = JSON.parse(response)
+                document.getElementById("status").innerHTML = "Status: " + response.status
+                sessionStorage.token = response.token;
+            })
+        })
+    })
+}
+
+async function loginUser(){
+    let username = document.forms[0].username.value;
+    if (!validateUsername(username)){
+        document.getElementById("status").innerHTML = 
+            "Invalid username. Username must be 3 or more alphanumeric characters";
+            return
+    }
+    fetch(`http://localhost:3000/userSalt?u=${username}`).then(response => {
+        response.text().then(text => {
+            hashString(document.forms[0].password.value + text.toString()).then(ph => {
+                fetch(`http://localhost:3000/loginUser?u=${username}&ph=${ph}`).then(response => {
+                    response.text().then(text => {
+                        let result = JSON.parse(text)
+                        sessionStorage.setItem("token", result.token)
+                        document.getElementById("status").innerHTML = (
+                            "Status: " + result.status
+                            + `<br /><a href='./evilBooks?token=${result.token}'>`
+                            + "Check out our members only collection of evil books</a>"
+                        )
+                    })
+                })
             })
         })
     })
