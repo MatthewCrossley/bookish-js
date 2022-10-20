@@ -29,8 +29,8 @@ async function createUser(){
             "Invalid password. Password must be 5 or more characters and MUST NOT START WITH 'password'";
             return
     }
-    const salt = Math.random()
-    password = password + salt.toString()
+    const salt = Math.random().toString().replace("0.", "")
+    password = password + salt
     hashString(password).then(passwordHash => {
         fetch(`http://localhost:3000/createUser?u=${username}&ph=${passwordHash}&s=${salt}`)
         .then(response => {
