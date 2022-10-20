@@ -16,7 +16,7 @@ export async function createUser(user, passHash, salt){
         return response("error: user exists", null)
     }
     let x = await query(`insert into Users ([Username], [Pass], [Salt]) values ('${user}', '${passHash}', '${salt}')`)
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 3600 })
     return response("all good", accessToken)
 }
 
@@ -24,7 +24,7 @@ export async function loginUser(user, passHash){
     const dbResult = await query(`select Pass from Users where Username='${user}'`)
     const dbUser = dbResult.recordset[0]
     if (dbUser.Pass === passHash){
-        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 3600 })
         return response("all good", accessToken)
     }
     return response("forbidden", null)
